@@ -1,0 +1,2009 @@
+<!DOCTYPE html>
+<html lang="ru">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JOLDA — Аренда и выкуп авто в Астане</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Manrope:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <style>
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --black: #0a0a0a;
+            --white: #f5f2ec;
+            --gold: #c8a96e;
+            --gold-light: #e8d5a3;
+            --gold-dark: #8a6f3e;
+            --gray: #1a1a1a;
+            --gray2: #2a2a2a;
+            --gray3: #3d3d3d;
+            --text-muted: #888;
+            --font-display: 'Bebas Neue', sans-serif;
+            --font-body: 'Manrope', sans-serif;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            background: var(--black);
+            color: var(--white);
+            font-family: var(--font-body);
+            font-size: 16px;
+            line-height: 1.6;
+            overflow-x: hidden;
+            cursor: default;
+        }
+
+        /* ── CURSOR ── */
+        .cursor {
+            width: 8px;
+            height: 8px;
+            background: var(--gold);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.15s ease;
+            mix-blend-mode: difference;
+        }
+
+        .cursor-ring {
+            width: 36px;
+            height: 36px;
+            border: 1px solid var(--gold);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9998;
+            transition: transform 0.35s cubic-bezier(.23, 1, .32, 1), opacity 0.2s;
+            opacity: 0.5;
+            transform: translate(-50%, -50%);
+        }
+
+        /* ── NAV ── */
+        nav {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 100;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 24px 60px;
+            background: linear-gradient(to bottom, rgba(10, 10, 10, 0.95) 0%, transparent 100%);
+            backdrop-filter: blur(2px);
+        }
+
+        .logo {
+            font-family: var(--font-display);
+            font-size: 36px;
+            letter-spacing: 4px;
+            color: var(--white);
+            text-decoration: none;
+            line-height: 1;
+        }
+
+        .logo span {
+            color: var(--gold);
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 40px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            color: var(--text-muted);
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 500;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            transition: color 0.2s;
+        }
+
+        .nav-links a:hover {
+            color: var(--gold);
+        }
+
+        .nav-cta {
+            background: var(--gold);
+            color: var(--black) !important;
+            padding: 10px 24px;
+            border-radius: 2px;
+            font-weight: 700 !important;
+            transition: background 0.2s, transform 0.2s !important;
+        }
+
+        .nav-cta:hover {
+            background: var(--gold-light) !important;
+            transform: translateY(-1px);
+        }
+
+        /* ── HERO ── */
+        .hero {
+            min-height: 100vh;
+            display: flex;
+            align-items: flex-end;
+            padding: 0 60px 80px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-bg {
+            position: absolute;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 60% 40%, rgba(200, 169, 110, 0.08) 0%, transparent 70%),
+                radial-gradient(ellipse 40% 40% at 80% 80%, rgba(200, 169, 110, 0.04) 0%, transparent 60%),
+                var(--black);
+        }
+
+        .hero-grid {
+            position: absolute;
+            inset: 0;
+            background-image:
+                linear-gradient(rgba(200, 169, 110, 0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(200, 169, 110, 0.04) 1px, transparent 1px);
+            background-size: 80px 80px;
+            mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 0%, transparent 100%);
+        }
+
+        .hero-number {
+            position: absolute;
+            top: 50%;
+            right: -40px;
+            transform: translateY(-50%);
+            font-family: var(--font-display);
+            font-size: clamp(200px, 30vw, 400px);
+            color: rgba(200, 169, 110, 0.04);
+            line-height: 1;
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 2;
+            max-width: 700px;
+        }
+
+        .hero-tag {
+            display: inline-block;
+            background: rgba(200, 169, 110, 0.15);
+            border: 1px solid rgba(200, 169, 110, 0.3);
+            color: var(--gold);
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            padding: 6px 16px;
+            border-radius: 2px;
+            margin-bottom: 32px;
+        }
+
+        .hero-title {
+            font-family: var(--font-display);
+            font-size: clamp(64px, 9vw, 130px);
+            line-height: 0.9;
+            letter-spacing: 2px;
+            margin-bottom: 32px;
+        }
+
+        .hero-title .line2 {
+            color: var(--gold);
+            display: block;
+        }
+
+        .hero-sub {
+            font-size: 17px;
+            color: var(--text-muted);
+            max-width: 460px;
+            line-height: 1.7;
+            margin-bottom: 48px;
+            font-weight: 300;
+        }
+
+        .hero-actions {
+            display: flex;
+            gap: 16px;
+            flex-wrap: wrap;
+        }
+
+        .btn-primary {
+            background: var(--gold);
+            color: var(--black);
+            padding: 16px 40px;
+            font-family: var(--font-body);
+            font-weight: 700;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: none;
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.25s;
+            display: inline-block;
+        }
+
+        .btn-primary:hover {
+            background: var(--gold-light);
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--white);
+            padding: 16px 40px;
+            font-family: var(--font-body);
+            font-weight: 600;
+            font-size: 13px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            text-decoration: none;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            cursor: pointer;
+            border-radius: 2px;
+            transition: all 0.25s;
+            display: inline-block;
+        }
+
+        .btn-outline:hover {
+            border-color: var(--gold);
+            color: var(--gold);
+        }
+
+        .hero-stats {
+            position: absolute;
+            right: 60px;
+            bottom: 80px;
+            display: flex;
+            flex-direction: column;
+            gap: 32px;
+            z-index: 2;
+        }
+
+        .stat-item {
+            text-align: right;
+        }
+
+        .stat-num {
+            font-family: var(--font-display);
+            font-size: 42px;
+            color: var(--gold);
+            line-height: 1;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-top: 4px;
+        }
+
+        /* ── SECTION BASE ── */
+        section {
+            padding: 120px 60px;
+        }
+
+        .section-label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 4px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 16px;
+        }
+
+        .section-title {
+            font-family: var(--font-display);
+            font-size: clamp(40px, 6vw, 80px);
+            line-height: 0.95;
+            letter-spacing: 1px;
+            margin-bottom: 20px;
+        }
+
+        .section-sub {
+            color: var(--text-muted);
+            font-size: 16px;
+            font-weight: 300;
+            max-width: 560px;
+            line-height: 1.7;
+        }
+
+        /* ── PAGE TABS ── */
+        .page-tabs {
+            display: flex;
+            justify-content: center;
+            gap: 0;
+            margin-bottom: 0;
+            border-bottom: 1px solid var(--gray2);
+            padding: 0 60px;
+            background: rgba(10, 10, 10, 0.8);
+            backdrop-filter: blur(10px);
+            position: sticky;
+            top: 80px;
+            z-index: 50;
+        }
+
+        .tab-btn {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            font-family: var(--font-body);
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            padding: 20px 40px;
+            cursor: pointer;
+            position: relative;
+            transition: color 0.2s;
+        }
+
+        .tab-btn::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            right: 0;
+            height: 2px;
+            background: var(--gold);
+            transform: scaleX(0);
+            transition: transform 0.3s;
+        }
+
+        .tab-btn.active {
+            color: var(--gold);
+        }
+
+        .tab-btn.active::after {
+            transform: scaleX(1);
+        }
+
+        /* ── PAGES ── */
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        /* ── BUYOUT PAGE ── */
+        .buyout-intro {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 80px;
+            align-items: center;
+            margin-bottom: 100px;
+        }
+
+        .how-it-works {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 2px;
+            margin-bottom: 100px;
+        }
+
+        .step-card {
+            background: var(--gray);
+            padding: 48px 36px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .step-card::before {
+            content: attr(data-num);
+            position: absolute;
+            top: -20px;
+            right: 20px;
+            font-family: var(--font-display);
+            font-size: 120px;
+            color: rgba(200, 169, 110, 0.06);
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        .step-icon {
+            width: 48px;
+            height: 48px;
+            background: rgba(200, 169, 110, 0.1);
+            border: 1px solid rgba(200, 169, 110, 0.2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 24px;
+            font-size: 20px;
+        }
+
+        .step-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            color: var(--white);
+        }
+
+        .step-desc {
+            color: var(--text-muted);
+            font-size: 14px;
+            line-height: 1.7;
+        }
+
+        /* ── CAR CATALOG ── */
+        .catalog-title {
+            text-align: center;
+            margin-bottom: 60px;
+        }
+
+        .cars-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2px;
+            margin-bottom: 100px;
+        }
+
+        .car-card {
+            background: var(--gray);
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+            transition: background 0.3s;
+        }
+
+        .car-card:hover {
+            background: var(--gray2);
+        }
+
+        .car-card-top {
+            padding: 36px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+        }
+
+        .car-class {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            background: rgba(200, 169, 110, 0.1);
+            padding: 4px 12px;
+            border-radius: 2px;
+        }
+
+        .car-price-tag {
+            text-align: right;
+        }
+
+        .car-price-label {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-bottom: 4px;
+        }
+
+        .car-price-val {
+            font-family: var(--font-display);
+            font-size: 28px;
+            color: var(--white);
+        }
+
+        .car-price-unit {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .car-visual {
+            height: 180px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 100px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .car-visual::before {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            height: 80px;
+            background: linear-gradient(transparent, var(--gray));
+        }
+
+        .car-silhouette {
+            position: relative;
+            z-index: 1;
+            filter: drop-shadow(0 20px 40px rgba(200, 169, 110, 0.15));
+            transition: transform 0.4s ease;
+        }
+
+        .car-card:hover .car-silhouette {
+            transform: scale(1.05) translateY(-4px);
+        }
+
+        .car-name {
+            font-family: var(--font-display);
+            font-size: 44px;
+            letter-spacing: 2px;
+            padding: 0 36px;
+            margin-bottom: 8px;
+        }
+
+        .car-model {
+            font-size: 13px;
+            color: var(--text-muted);
+            padding: 0 36px;
+            margin-bottom: 24px;
+        }
+
+        .car-specs {
+            display: flex;
+            gap: 0;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .spec-item {
+            flex: 1;
+            padding: 16px 24px;
+            border-right: 1px solid rgba(255, 255, 255, 0.06);
+            text-align: center;
+        }
+
+        .spec-item:last-child {
+            border-right: none;
+        }
+
+        .spec-val {
+            font-weight: 700;
+            font-size: 15px;
+            color: var(--white);
+        }
+
+        .spec-lbl {
+            font-size: 10px;
+            color: var(--text-muted);
+            letter-spacing: 1px;
+            margin-top: 2px;
+        }
+
+        /* ── CAR MODAL ── */
+        .car-expand {
+            display: none;
+            background: var(--gray2);
+            border-top: 1px solid rgba(200, 169, 110, 0.15);
+            padding: 0;
+            overflow: hidden;
+            transition: max-height 0.4s ease;
+        }
+
+        .car-expand.open {
+            display: block;
+            animation: expandDown 0.3s ease;
+        }
+
+        @keyframes expandDown {
+            from {
+                opacity: 0;
+                transform: translateY(-8px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .expand-inner {
+            padding: 40px 36px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            align-items: start;
+        }
+
+        .expand-conditions h4 {
+            font-size: 11px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--gold);
+            margin-bottom: 20px;
+        }
+
+        .condition-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .condition-list li {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .condition-list li::before {
+            content: '—';
+            color: var(--gold);
+            flex-shrink: 0;
+            margin-top: 1px;
+        }
+
+        .expand-cta-box {
+            background: rgba(200, 169, 110, 0.05);
+            border: 1px solid rgba(200, 169, 110, 0.15);
+            padding: 32px;
+            border-radius: 4px;
+        }
+
+        .expand-cta-box h4 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .expand-cta-box p {
+            color: var(--text-muted);
+            font-size: 14px;
+            margin-bottom: 24px;
+            line-height: 1.6;
+        }
+
+        .wa-btn {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #25D366;
+            color: white;
+            padding: 14px 28px;
+            border-radius: 4px;
+            font-weight: 700;
+            font-size: 14px;
+            text-decoration: none;
+            transition: all 0.2s;
+            width: fit-content;
+        }
+
+        .wa-btn:hover {
+            background: #20b958;
+            transform: translateY(-1px);
+        }
+
+        .wa-btn svg {
+            width: 20px;
+            height: 20px;
+            flex-shrink: 0;
+        }
+
+        /* ── DREAM CAR FORM ── */
+        .dream-section {
+            background: var(--gray);
+            padding: 80px 60px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .dream-section::before {
+            content: 'МЕЧТА';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-family: var(--font-display);
+            font-size: 280px;
+            color: rgba(200, 169, 110, 0.03);
+            white-space: nowrap;
+            pointer-events: none;
+        }
+
+        .dream-inner {
+            position: relative;
+            z-index: 2;
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+
+        .dream-inner .section-label {
+            justify-content: center;
+            display: flex;
+        }
+
+        .dream-inner .section-title {
+            font-size: clamp(36px, 5vw, 64px);
+        }
+
+        .dream-inner .section-sub {
+            margin: 0 auto 56px;
+        }
+
+        .dream-form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px;
+            text-align: left;
+        }
+
+        .form-full {
+            grid-column: 1 / -1;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+        }
+
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            background: rgba(255, 255, 255, 0.04);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            border-radius: 2px;
+            padding: 14px 18px;
+            color: var(--white);
+            font-family: var(--font-body);
+            font-size: 15px;
+            transition: border-color 0.2s;
+            outline: none;
+            appearance: none;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus,
+        .form-group textarea:focus {
+            border-color: var(--gold);
+        }
+
+        .form-group select option {
+            background: var(--gray);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .form-submit {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin-top: 8px;
+        }
+
+        .form-submit .btn-primary {
+            padding: 18px 64px;
+            font-size: 14px;
+        }
+
+        .form-note {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 16px;
+        }
+
+        /* ── RENTAL PAGE ── */
+        .personas-intro {
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 80px;
+            align-items: center;
+            margin-bottom: 80px;
+        }
+
+        .personas-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 2px;
+        }
+
+        .persona-card {
+            background: var(--gray);
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+            transition: background 0.25s;
+            border-left: 3px solid transparent;
+        }
+
+        .persona-card:hover {
+            background: var(--gray2);
+        }
+
+        .persona-card.p-business {
+            border-left-color: #4A9EFF;
+        }
+
+        .persona-card.p-tourist {
+            border-left-color: #7CCA6B;
+        }
+
+        .persona-card.p-weekend {
+            border-left-color: var(--gold);
+        }
+
+        .persona-card.p-premium {
+            border-left-color: #C87E8A;
+        }
+
+        .persona-header {
+            padding: 36px;
+        }
+
+        .persona-emoji {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            margin-bottom: 20px;
+        }
+
+        .p-business .persona-emoji {
+            background: rgba(74, 158, 255, 0.1);
+        }
+
+        .p-tourist .persona-emoji {
+            background: rgba(124, 202, 107, 0.1);
+        }
+
+        .p-weekend .persona-emoji {
+            background: rgba(200, 169, 110, 0.1);
+        }
+
+        .p-premium .persona-emoji {
+            background: rgba(200, 126, 138, 0.1);
+        }
+
+        .persona-tag {
+            font-size: 10px;
+            font-weight: 700;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            margin-bottom: 8px;
+        }
+
+        .p-business .persona-tag {
+            color: #4A9EFF;
+        }
+
+        .p-tourist .persona-tag {
+            color: #7CCA6B;
+        }
+
+        .p-weekend .persona-tag {
+            color: var(--gold);
+        }
+
+        .p-premium .persona-tag {
+            color: #C87E8A;
+        }
+
+        .persona-name {
+            font-family: var(--font-display);
+            font-size: 36px;
+            letter-spacing: 1px;
+            margin-bottom: 8px;
+            line-height: 1;
+        }
+
+        .persona-desc {
+            font-size: 13px;
+            color: var(--text-muted);
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .persona-price-row {
+            display: flex;
+            align-items: baseline;
+            gap: 8px;
+            padding: 20px 36px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        .persona-price-main {
+            font-family: var(--font-display);
+            font-size: 36px;
+            color: var(--white);
+        }
+
+        .persona-price-period {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+
+        .persona-expand {
+            display: none;
+            border-top: 1px solid rgba(200, 169, 110, 0.1);
+        }
+
+        .persona-expand.open {
+            display: block;
+            animation: expandDown 0.3s ease;
+        }
+
+        .persona-expand-inner {
+            padding: 32px 36px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 32px;
+        }
+
+        .pe-car-info h5 {
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .pe-car-name {
+            font-family: var(--font-display);
+            font-size: 28px;
+            color: var(--gold);
+            margin-bottom: 8px;
+        }
+
+        .pe-car-specs {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .pe-car-specs li {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 8px;
+            align-items: flex-start;
+        }
+
+        .pe-car-specs li::before {
+            content: '·';
+            color: var(--gold);
+        }
+
+        .pe-conditions h5 {
+            font-size: 10px;
+            letter-spacing: 3px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 16px;
+        }
+
+        .pe-cond-list {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 24px;
+        }
+
+        .pe-cond-list li {
+            font-size: 13px;
+            color: var(--text-muted);
+            display: flex;
+            gap: 8px;
+            line-height: 1.5;
+        }
+
+        .pe-cond-list li::before {
+            content: '✓';
+            color: #7CCA6B;
+            flex-shrink: 0;
+        }
+
+        /* ── SCROLL INDICATOR ── */
+        .scroll-hint {
+            position: absolute;
+            bottom: 40px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 8px;
+            color: var(--text-muted);
+            font-size: 10px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            animation: float 2s ease-in-out infinite;
+        }
+
+        @keyframes float {
+
+            0%,
+            100% {
+                transform: translateX(-50%) translateY(0);
+            }
+
+            50% {
+                transform: translateX(-50%) translateY(-6px);
+            }
+        }
+
+        .scroll-line {
+            width: 1px;
+            height: 40px;
+            background: linear-gradient(var(--gold), transparent);
+        }
+
+        /* ── FOOTER ── */
+        footer {
+            background: var(--gray);
+            padding: 60px;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 40px;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .footer-brand .logo {
+            font-size: 28px;
+            display: block;
+            margin-bottom: 12px;
+        }
+
+        .footer-brand p {
+            font-size: 13px;
+            color: var(--text-muted);
+            max-width: 220px;
+            line-height: 1.6;
+        }
+
+        .footer-col h5 {
+            font-size: 11px;
+            letter-spacing: 2px;
+            text-transform: uppercase;
+            color: var(--text-muted);
+            margin-bottom: 20px;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-col ul a {
+            color: rgba(255, 255, 255, 0.6);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.2s;
+        }
+
+        .footer-col ul a:hover {
+            color: var(--gold);
+        }
+
+        .footer-bottom {
+            padding: 24px 60px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid rgba(255, 255, 255, 0.06);
+        }
+
+        .footer-bottom p {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        /* ── ANIMATIONS ── */
+        .reveal {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.7s ease, transform 0.7s ease;
+        }
+
+        .reveal.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* ── CONTACT STRIP ── */
+        .contact-strip {
+            background: var(--gold);
+            padding: 40px 60px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .contact-strip h3 {
+            font-family: var(--font-display);
+            font-size: 36px;
+            color: var(--black);
+            letter-spacing: 1px;
+        }
+
+        .contact-strip p {
+            font-size: 15px;
+            color: rgba(0, 0, 0, 0.6);
+            margin-top: 4px;
+        }
+
+        /* ── MOBILE ── */
+        @media (max-width: 900px) {
+            nav {
+                padding: 20px 24px;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .hero {
+                padding: 0 24px 60px;
+            }
+
+            .hero-stats {
+                display: none;
+            }
+
+            section {
+                padding: 80px 24px;
+            }
+
+            .page-tabs {
+                padding: 0 24px;
+            }
+
+            .tab-btn {
+                padding: 16px 20px;
+                font-size: 11px;
+            }
+
+            .buyout-intro,
+            .personas-intro {
+                grid-template-columns: 1fr;
+                gap: 40px;
+            }
+
+            .cars-grid,
+            .personas-grid,
+            .how-it-works {
+                grid-template-columns: 1fr;
+            }
+
+            .expand-inner,
+            .persona-expand-inner,
+            .dream-form {
+                grid-template-columns: 1fr;
+            }
+
+            .dream-section {
+                padding: 60px 24px;
+            }
+
+            footer {
+                grid-template-columns: 1fr;
+                padding: 40px 24px;
+            }
+
+            .footer-bottom {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+                padding: 20px 24px;
+            }
+
+            .contact-strip {
+                flex-direction: column;
+                gap: 24px;
+                text-align: center;
+                padding: 40px 24px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="cursor" id="cursor"></div>
+    <div class="cursor-ring" id="cursorRing"></div>
+
+    <!-- NAV -->
+    <nav>
+        <a href="#" class="logo">Ж<span>О</span>ЛДА</a>
+        <ul class="nav-links">
+            <li><a href="#" onclick="showPage('buyout')">Аренда с выкупом</a></li>
+            <li><a href="#" onclick="showPage('rental')">Аренда авто</a></li>
+            <li><a href="#contacts">Контакты</a></li>
+            <li><a href="https://wa.me/77761542437" target="_blank" class="nav-cta">WhatsApp</a></li>
+        </ul>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero" id="home">
+        <div class="hero-bg"></div>
+        <div class="hero-grid"></div>
+        <div class="hero-number">А</div>
+
+        <div class="hero-content">
+            <div class="hero-tag">✦ Астана · Казахстан</div>
+            <h1 class="hero-title">
+                ТВОЯ<br>
+                <span class="line2">ДОРОГА</span>
+                НАЧИНАЕТСЯ
+            </h1>
+            <p class="hero-sub">Аренда автомобилей с выкупом и без — прозрачные условия, премиальный сервис, авто в
+                любую точку города.</p>
+            <div class="hero-actions">
+                <a href="#" onclick="showPage('buyout')" class="btn-primary">Аренда с выкупом</a>
+                <a href="#" onclick="showPage('rental')" class="btn-outline">Просто арендовать</a>
+            </div>
+        </div>
+
+        <div class="hero-stats">
+            <div class="stat-item">
+                <div class="stat-num">11+</div>
+                <div class="stat-label">Автомобилей</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">3</div>
+                <div class="stat-label">Класса авто</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-num">24/7</div>
+                <div class="stat-label">Поддержка</div>
+            </div>
+        </div>
+
+        <div class="scroll-hint">
+            <div class="scroll-line"></div>
+            <span>Смотреть</span>
+        </div>
+    </section>
+
+    <!-- PAGE TABS -->
+    <div class="page-tabs" id="pageTabs">
+        <button class="tab-btn active" onclick="showPage('buyout')">✦ Аренда с выкупом</button>
+        <button class="tab-btn" onclick="showPage('rental')">◈ Аренда без выкупа</button>
+    </div>
+
+    <!-- ════════════════════════════════════════
+     PAGE: BUYOUT
+════════════════════════════════════════ -->
+    <div id="page-buyout" class="page active">
+
+        <!-- Intro -->
+        <section>
+            <div class="buyout-intro reveal">
+                <div>
+                    <div class="section-label">Как это работает</div>
+                    <h2 class="section-title">АВТО<br>В РАССРОЧКУ<br><span style="color:var(--gold)">БЕЗ БАНКОВ</span>
+                    </h2>
+                </div>
+                <div>
+                    <p class="section-sub" style="max-width:100%">Выбираете автомобиль из нашего парка — или предлагаете
+                        свой. Платите ежедневно. Через согласованный срок машина ваша. Никаких скрытых комиссий, никаких
+                        переплат банку.</p>
+                    <br>
+                    <p style="color:var(--text-muted);font-size:14px;line-height:1.7">Каждый тенге ежедневного платежа
+                        идёт в счёт выкупа. Прозрачный прогресс, честные условия — и машина становится вашей быстрее,
+                        чем вы думаете.</p>
+                </div>
+            </div>
+
+            <!-- Steps -->
+            <div class="how-it-works reveal">
+                <div class="step-card" data-num="1">
+                    <div class="step-icon">🚗</div>
+                    <div class="step-title">Выбираете авто</div>
+                    <div class="step-desc">Из нашего каталога или предлагаете свой вариант — мы выкупим и подготовим его
+                        для вас.</div>
+                </div>
+                <div class="step-card" data-num="2">
+                    <div class="step-icon">📋</div>
+                    <div class="step-title">Подписываете договор</div>
+                    <div class="step-desc">Чёткие условия, фиксированный срок выкупа, ежедневная ставка. Никаких
+                        сюрпризов.</div>
+                </div>
+                <div class="step-card" data-num="3">
+                    <div class="step-icon">🔑</div>
+                    <div class="step-title">Машина ваша</div>
+                    <div class="step-desc">Платите ежедневно, зарабатываете на такси. По истечении срока — получаете
+                        ПТС.</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Catalog -->
+        <section style="padding-top:0">
+            <div class="catalog-title reveal">
+                <div class="section-label">Наш парк</div>
+                <h2 class="section-title">КАТАЛОГ<br><span style="color:var(--gold)">АВТОМОБИЛЕЙ</span></h2>
+            </div>
+
+            <div class="cars-grid">
+
+                <!-- ЭЛАНТРА -->
+                <div class="car-card reveal" onclick="toggleCar('elantra')">
+                    <div class="car-card-top">
+                        <span class="car-class">Комфорт плюс</span>
+                        <div class="car-price-tag">
+                            <div class="car-price-label">от</div>
+                            <div class="car-price-val">19 231 <span class="car-price-unit">₸/день</span></div>
+                        </div>
+                    </div>
+                    <div class="car-visual">
+                        <img src="elantra.jpg" alt="Hyundai Elantra"
+                            style="max-height:100%; max-width:100%; object-fit:contain;">
+                    </div>
+                    <div class="car-name">ЭЛАНТРА</div>
+                    <div class="car-model">Hyundai Elantra · Комфорт</div>
+                    <div class="car-specs">
+                        <div class="spec-item">
+                            <div class="spec-val">9 000 000</div>
+                            <div class="spec-lbl">₸ цена</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-val">115 386</div>
+                            <div class="spec-lbl">₸/месяц</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-val">Yandex Go</div>
+                            <div class="spec-lbl">Совместимость</div>
+                        </div>
+                    </div>
+                    <div class="car-expand" id="car-elantra">
+                        <div class="expand-inner">
+                            <div class="expand-conditions">
+                                <h4>Условия выкупа</h4>
+                                <ul class="condition-list">
+                                    <li>Стоимость автомобиля: 9 000 000 ₸</li>
+                                    <li>Ежедневный платёж: 19 231 ₸ / день</li>
+                                    <li>Ежемесячный платёж: ~115 386 ₸ / месяц</li>
+                                    <li>КАСКО включено в первый год</li>
+                                    <li>GPS-мониторинг установлен (3 000 ₸/мес обслуживание)</li>
+                                    <li>Страховка и тех. осмотр — по договору</li>
+                                    <li>После полного выкупа — переоформление ПТС на ваше имя</li>
+                                </ul>
+                            </div>
+                            <div class="expand-cta-box">
+                                <h4>Готовы стартовать?</h4>
+                                <p>Напишите нам — ответим в течение 15 минут, расскажем об условиях и назначим встречу.
+                                </p>
+                                <a class="wa-btn"
+                                    href="https://wa.me/77761542437?text=Здравствуйте!%20Интересует%20аренда%20Hyundai%20Elantra%20с%20выкупом."
+                                    target="_blank">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                                    </svg>
+                                    Написать в WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ДЕСТРОЕР -->
+                <div class="car-card reveal" onclick="toggleCar('destroyer')">
+                    <div class="car-card-top">
+                        <span class="car-class">Комфорт плюс</span>
+                        <div class="car-price-tag">
+                            <div class="car-price-label">от</div>
+                            <div class="car-price-val">19 231 <span class="car-price-unit">₸/день</span></div>
+                        </div>
+                    </div>
+                    <div class="car-visual">
+                        <img src="destroyer.webp" alt="Chery Tiggo Destroyer"
+                            style="max-height:100%; max-width:100%; object-fit:contain;">
+                    </div>
+                    <div class="car-name">ДЕСТРОЕР</div>
+                    <div class="car-model">Chery Tiggo Destroyer · Кроссовер</div>
+                    <div class="car-specs">
+                        <div class="spec-item">
+                            <div class="spec-val">9 000 000</div>
+                            <div class="spec-lbl">₸ цена</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-val">115 386</div>
+                            <div class="spec-lbl">₸/месяц</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-val">6 штук</div>
+                            <div class="spec-lbl">В парке</div>
+                        </div>
+                    </div>
+                    <div class="car-expand" id="car-destroyer">
+                        <div class="expand-inner">
+                            <div class="expand-conditions">
+                                <h4>Условия выкупа</h4>
+                                <ul class="condition-list">
+                                    <li>Стоимость автомобиля: 9 000 000 ₸</li>
+                                    <li>Ежедневный платёж: 19 231 ₸ / день</li>
+                                    <li>Ежемесячный платёж: ~115 386 ₸ / месяц</li>
+                                    <li>КАСКО включено в первый год</li>
+                                    <li>GPS-мониторинг установлен (3 000 ₸/мес обслуживание)</li>
+                                    <li>Кроссовер — разрешён выезд за город</li>
+                                    <li>После полного выкупа — переоформление ПТС</li>
+                                </ul>
+                            </div>
+                            <div class="expand-cta-box">
+                                <h4>Хотите этот кроссовер?</h4>
+                                <p>Напишите нам — ответим в течение 15 минут, расскажем об условиях.</p>
+                                <a class="wa-btn"
+                                    href="https://wa.me/77761542437?text=Здравствуйте!%20Интересует%20аренда%20Chery%20Tiggo%20Destroyer%20с%20выкупом."
+                                    target="_blank">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                                    </svg>
+                                    Написать в WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- СОНАТА -->
+                <div class="car-card reveal" onclick="toggleCar('sonata')">
+                    <div class="car-card-top">
+                        <span class="car-class"
+                            style="background:rgba(200,126,138,0.1);color:#C87E8A;border:1px solid rgba(200,126,138,0.2)">Бизнес</span>
+                        <div class="car-price-tag">
+                            <div class="car-price-label">от</div>
+                            <div class="car-price-val">25 641 <span class="car-price-unit">₸/день</span></div>
+                        </div>
+                    </div>
+                    <div class="car-visual">
+                        <img src="sonata.jpg" alt="Hyundai Sonata"
+                            style="max-height:100%; max-width:100%; object-fit:contain;">
+                    </div>
+                    <div class="car-name">СОНАТА</div>
+                    <div class="car-model">Hyundai Sonata · Бизнес</div>
+                    <div class="car-specs">
+                        <div class="spec-item">
+                            <div class="spec-val">12 000 000</div>
+                            <div class="spec-lbl">₸ цена</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-val">153 846</div>
+                            <div class="spec-lbl">₸/месяц</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-val">2 штуки</div>
+                            <div class="spec-lbl">В парке</div>
+                        </div>
+                    </div>
+                    <div class="car-expand" id="car-sonata">
+                        <div class="expand-inner">
+                            <div class="expand-conditions">
+                                <h4>Условия выкупа</h4>
+                                <ul class="condition-list">
+                                    <li>Стоимость автомобиля: 12 000 000 ₸</li>
+                                    <li>Ежедневный платёж: 25 641 ₸ / день</li>
+                                    <li>Ежемесячный платёж: ~153 846 ₸ / месяц</li>
+                                    <li>КАСКО включено в первый год</li>
+                                    <li>GPS-мониторинг установлен</li>
+                                    <li>Представительский бизнес-класс</li>
+                                    <li>После полного выкупа — переоформление ПТС</li>
+                                </ul>
+                            </div>
+                            <div class="expand-cta-box">
+                                <h4>Бизнес-класс для вас</h4>
+                                <p>Hyundai Sonata — выбор тех, кто зарабатывает больше. Напишите нам прямо сейчас.</p>
+                                <a class="wa-btn"
+                                    href="https://wa.me/77761542437?text=Здравствуйте!%20Интересует%20аренда%20Hyundai%20Sonata%20с%20выкупом."
+                                    target="_blank">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                                    </svg>
+                                    Написать в WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- АКЦЕНТ -->
+                <div class="car-card reveal" onclick="toggleCar('accent')">
+                    <div class="car-card-top">
+                        <span class="car-class"
+                            style="background:rgba(124,202,107,0.1);color:#7CCA6B;border:1px solid rgba(124,202,107,0.2)">Эконом</span>
+                        <div class="car-price-tag">
+                            <div class="car-price-label">от</div>
+                            <div class="car-price-val">14 957 <span class="car-price-unit">₸/день</span></div>
+                        </div>
+                    </div>
+                    <div class="car-visual">
+                        <img src="accent.avif" alt="Hyundai Accent"
+                            style="max-height:100%; max-width:100%; object-fit:contain;">
+                    </div>
+                    <div class="car-name">АКЦЕНТ</div>
+                    <div class="car-model">Hyundai Accent · Эконом</div>
+                    <div class="car-specs">
+                        <div class="spec-item">
+                            <div class="spec-val">7 000 000</div>
+                            <div class="spec-lbl">₸ цена</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-val">89 744</div>
+                            <div class="spec-lbl">₸/месяц</div>
+                        </div>
+                        <div class="spec-item">
+                            <div class="spec-val">3 штуки</div>
+                            <div class="spec-lbl">В парке</div>
+                        </div>
+                    </div>
+                    <div class="car-expand" id="car-accent">
+                        <div class="expand-inner">
+                            <div class="expand-conditions">
+                                <h4>Условия выкупа</h4>
+                                <ul class="condition-list">
+                                    <li>Стоимость автомобиля: 7 000 000 ₸</li>
+                                    <li>Ежедневный платёж: 14 957 ₸ / день</li>
+                                    <li>Ежемесячный платёж: ~89 744 ₸ / месяц</li>
+                                    <li>КАСКО включено в первый год</li>
+                                    <li>GPS-мониторинг установлен</li>
+                                    <li>Идеально для старта в такси</li>
+                                    <li>После полного выкупа — переоформление ПТС</li>
+                                </ul>
+                            </div>
+                            <div class="expand-cta-box">
+                                <h4>Лучший старт</h4>
+                                <p>Акцент — популярный выбор для начинающих водителей. Минимальный платёж, максимальная
+                                    надёжность.</p>
+                                <a class="wa-btn"
+                                    href="https://wa.me/77761542437?text=Здравствуйте!%20Интересует%20аренда%20Hyundai%20Accent%20с%20выкупом."
+                                    target="_blank">
+                                    <svg viewBox="0 0 24 24" fill="currentColor">
+                                        <path
+                                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                                    </svg>
+                                    Написать в WhatsApp
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- DREAM CAR FORM -->
+        <div class="dream-section" id="dreamcar">
+            <div class="dream-inner">
+                <div class="section-label">Особое предложение</div>
+                <h2 class="section-title">НЕТ НУЖНОГО<br><span style="color:var(--gold)">АВТО?</span></h2>
+                <p class="section-sub">Скажите нам, какой автомобиль вы хотите — мы найдём, выкупим и подготовим его
+                    специально для вас. Вы начнёте ездить и зарабатывать уже через несколько дней.</p>
+
+                <form class="dream-form" onsubmit="submitDream(event)">
+                    <div class="form-group">
+                        <label>Ваше имя</label>
+                        <input type="text" placeholder="Алибек" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Номер телефона</label>
+                        <input type="tel" placeholder="+7 777 123 45 67" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Марка автомобиля</label>
+                        <input type="text" placeholder="Например: Kia K5" required>
+                    </div>
+                    <div class="form-group">
+                        <label>Год выпуска</label>
+                        <select>
+                            <option value="">Не важно</option>
+                            <option>2024</option>
+                            <option>2023</option>
+                            <option>2022</option>
+                            <option>2021</option>
+                            <option>2020</option>
+                            <option>2019 и старше</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Цвет</label>
+                        <input type="text" placeholder="Белый, чёрный...">
+                    </div>
+                    <div class="form-group">
+                        <label>Комплектация / пожелания</label>
+                        <input type="text" placeholder="Автомат, кожа, камера...">
+                    </div>
+                    <div class="form-group form-full">
+                        <label>Дополнительно</label>
+                        <textarea placeholder="Расскажите подробнее о своих пожеланиях..."></textarea>
+                    </div>
+                    <div class="form-submit">
+                        <button type="submit" class="btn-primary">Отправить заявку →</button>
+                        <p class="form-note">Свяжемся с вами в течение 1 часа и обсудим всё по WhatsApp</p>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+    </div><!-- /page-buyout -->
+
+    <!-- ════════════════════════════════════════
+     PAGE: RENTAL (без выкупа)
+════════════════════════════════════════ -->
+    <div id="page-rental" class="page">
+
+        <section>
+            <div class="personas-intro reveal">
+                <div>
+                    <div class="section-label">Аренда без обязательств</div>
+                    <h2 class="section-title">НУЖНА<br>МАШИНА?<br><span style="color:var(--gold)">МЫ РЯДОМ</span></h2>
+                    <br>
+                    <p class="section-sub" style="max-width:100%">Подобрали пакеты под разные ситуации. Нажмите на
+                        нужный — увидите авто, цену и условия. Всё просто.</p>
+                </div>
+                <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px">
+                    <div style="background:var(--gray);padding:28px;text-align:center">
+                        <div style="font-family:var(--font-display);font-size:40px;color:var(--gold)">24/7</div>
+                        <div style="font-size:12px;color:var(--text-muted);letter-spacing:1px;margin-top:4px">Поддержка
+                        </div>
+                    </div>
+                    <div style="background:var(--gray);padding:28px;text-align:center">
+                        <div style="font-family:var(--font-display);font-size:40px;color:var(--gold)">45 мин</div>
+                        <div style="font-size:12px;color:var(--text-muted);letter-spacing:1px;margin-top:4px">Доставка
+                            авто</div>
+                    </div>
+                    <div style="background:var(--gray);padding:28px;text-align:center">
+                        <div style="font-family:var(--font-display);font-size:40px;color:var(--gold)">0</div>
+                        <div style="font-size:12px;color:var(--text-muted);letter-spacing:1px;margin-top:4px">Скрытых
+                            платежей</div>
+                    </div>
+                    <div style="background:var(--gray);padding:28px;text-align:center">
+                        <div style="font-family:var(--font-display);font-size:40px;color:var(--gold)">4</div>
+                        <div style="font-size:12px;color:var(--text-muted);letter-spacing:1px;margin-top:4px">Пакета
+                            аренды</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PERSONA CARDS -->
+            <div class="personas-grid">
+
+                <!-- 1: Командировочный -->
+                <div class="persona-card p-business reveal" onclick="togglePersona('business')">
+                    <div class="persona-header">
+                        <div class="persona-emoji">💼</div>
+                        <div class="persona-tag">Бизнес-пакет</div>
+                        <div class="persona-name">КОМАНДИРОВОЧНЫЙ</div>
+                        <div class="persona-desc">Приехали в Астану на 2–5 дней? Чистый представительский седан,
+                            доставка в аэропорт или отель, без очередей и звонков.</div>
+                    </div>
+                    <div class="persona-price-row">
+                        <span class="persona-price-main">18 000</span>
+                        <span class="persona-price-period">₸ / день · от 2 дней</span>
+                    </div>
+                    <div class="persona-expand" id="persona-business">
+                        <div class="persona-expand-inner">
+                            <div class="pe-car-info">
+                                <h5>Автомобиль</h5>
+                                <div class="pe-car-name">Hyundai Sonata</div>
+                                <ul class="pe-car-specs">
+                                    <li>2.5L · Автомат · Бизнес-класс</li>
+                                    <li>Кожаный салон, климат-контроль</li>
+                                    <li>USB, беспроводная зарядка</li>
+                                    <li>Тонировка, чистый ухоженный вид</li>
+                                </ul>
+                            </div>
+                            <div class="pe-conditions">
+                                <h5>Условия пакета</h5>
+                                <ul class="pe-cond-list">
+                                    <li>Доставка авто в аэропорт / отель</li>
+                                    <li>Документы оформляем за 10 минут</li>
+                                    <li>Безлимитный пробег по Астане</li>
+                                    <li>Каско и страховка включены</li>
+                                    <li>Корпоративный чек / акт</li>
+                                    <li>Скидка 10% от 5 дней</li>
+                                </ul>
+                                <a class="wa-btn"
+                                    href="https://wa.me/77761542437?text=Здравствуйте!%20Интересует%20Бизнес-пакет%20аренды%20(Командировочный)."
+                                    target="_blank">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"
+                                        style="width:18px;height:18px;flex-shrink:0">
+                                        <path
+                                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                                    </svg>
+                                    Забронировать
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2: Турист / путешественник -->
+                <div class="persona-card p-tourist reveal" onclick="togglePersona('tourist')">
+                    <div class="persona-header">
+                        <div class="persona-emoji">🗺️</div>
+                        <div class="persona-tag">Маршрутный пакет</div>
+                        <div class="persona-name">ПУТЕШЕСТВЕННИК</div>
+                        <div class="persona-desc">Боровое, Балхаш, Улытау — Казахстан огромный. Кроссовер,
+                            оффлайн-карты, поддержка на маршруте. Едьте спокойно.</div>
+                    </div>
+                    <div class="persona-price-row">
+                        <span class="persona-price-main">15 000</span>
+                        <span class="persona-price-period">₸ / день · от 3 дней</span>
+                    </div>
+                    <div class="persona-expand" id="persona-tourist">
+                        <div class="persona-expand-inner">
+                            <div class="pe-car-info">
+                                <h5>Автомобиль</h5>
+                                <div class="pe-car-name">Chery Tiggo Destroyer</div>
+                                <ul class="pe-car-specs">
+                                    <li>1.5T Турбо · Полный привод · Кроссовер</li>
+                                    <li>Высокий клиренс, надёжен на трассе</li>
+                                    <li>Вместительный багажник</li>
+                                    <li>Большой экран, навигация</li>
+                                </ul>
+                            </div>
+                            <div class="pe-conditions">
+                                <h5>Что включено</h5>
+                                <ul class="pe-cond-list">
+                                    <li>Выезд за пределы Астаны разрешён</li>
+                                    <li>Оффлайн-карты Казахстана предустановлены</li>
+                                    <li>WhatsApp-поддержка 24/7 на маршруте</li>
+                                    <li>Каско и страховка включены</li>
+                                    <li>Скидка 15% от 7 дней</li>
+                                    <li>Аварийный набор в багажнике</li>
+                                </ul>
+                                <a class="wa-btn" style="background:#7CCA6B;color:#0a2a06"
+                                    href="https://wa.me/77761542437?text=Здравствуйте!%20Интересует%20Маршрутный%20пакет%20аренды."
+                                    target="_blank">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"
+                                        style="width:18px;height:18px;flex-shrink:0">
+                                        <path
+                                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                                    </svg>
+                                    Забронировать
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3: Выходной -->
+                <div class="persona-card p-weekend reveal" onclick="togglePersona('weekend')">
+                    <div class="persona-header">
+                        <div class="persona-emoji">🌅</div>
+                        <div class="persona-tag">Выходной пакет</div>
+                        <div class="persona-name">АСТАНЧАНИН</div>
+                        <div class="persona-desc">Одна машина на семью — неудобно. Возьмите на выходные — съездите куда
+                            хотите, верните в воскресенье вечером.</div>
+                    </div>
+                    <div class="persona-price-row">
+                        <span class="persona-price-main">9 000</span>
+                        <span class="persona-price-period">₸ / день · пятн-воскр</span>
+                    </div>
+                    <div class="persona-expand" id="persona-weekend">
+                        <div class="persona-expand-inner">
+                            <div class="pe-car-info">
+                                <h5>Автомобиль</h5>
+                                <div class="pe-car-name">Hyundai Elantra</div>
+                                <ul class="pe-car-specs">
+                                    <li>1.6L · Автомат · Комфорт</li>
+                                    <li>Детское кресло по запросу</li>
+                                    <li>Чистый и ухоженный салон</li>
+                                    <li>Экономичный расход топлива</li>
+                                </ul>
+                            </div>
+                            <div class="pe-conditions">
+                                <h5>Условия</h5>
+                                <ul class="pe-cond-list">
+                                    <li>Забираете в пятницу с 18:00</li>
+                                    <li>Возвращаете в воскресенье до 22:00</li>
+                                    <li>Детское кресло по запросу бесплатно</li>
+                                    <li>Страховка включена</li>
+                                    <li>Подписка: 4 выходных в месяц — скидка 20%</li>
+                                </ul>
+                                <a class="wa-btn" style="background:var(--gold);color:var(--black)"
+                                    href="https://wa.me/77761542437?text=Здравствуйте!%20Интересует%20Выходной%20пакет%20аренды."
+                                    target="_blank">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"
+                                        style="width:18px;height:18px;flex-shrink:0">
+                                        <path
+                                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                                    </svg>
+                                    Забронировать
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 4: Премиум / корпоратив -->
+                <div class="persona-card p-premium reveal" onclick="togglePersona('premium')">
+                    <div class="persona-header">
+                        <div class="persona-emoji">⭐</div>
+                        <div class="persona-tag">Корпоративный пакет</div>
+                        <div class="persona-name">КОМПАНИЯ</div>
+                        <div class="persona-desc">Авто для сотрудников, VIP-гостей, презентаций. Чистый акт, закрывающие
+                            документы, счёт на юрлицо. Никакой бюрократии.</div>
+                    </div>
+                    <div class="persona-price-row">
+                        <span class="persona-price-main">от 12 000</span>
+                        <span class="persona-price-period">₸ / день · от 5 авто</span>
+                    </div>
+                    <div class="persona-expand" id="persona-premium">
+                        <div class="persona-expand-inner">
+                            <div class="pe-car-info">
+                                <h5>Автомобили</h5>
+                                <div class="pe-car-name">Весь парк</div>
+                                <ul class="pe-car-specs">
+                                    <li>Элантра, Соната, Дестроер, Акцент</li>
+                                    <li>Подберём под ваши задачи</li>
+                                    <li>Возможен смешанный парк</li>
+                                    <li>Персональный менеджер</li>
+                                </ul>
+                            </div>
+                            <div class="pe-conditions">
+                                <h5>Что входит</h5>
+                                <ul class="pe-cond-list">
+                                    <li>Счёт на юрлицо, закрывающие документы</li>
+                                    <li>Персональный менеджер 24/7</li>
+                                    <li>Доставка и возврат авто</li>
+                                    <li>Скидка от объёма: 3+ авто — 10%, 10+ — 20%</li>
+                                    <li>Каско и страховка включены</li>
+                                    <li>Ежемесячный отчёт по поездкам</li>
+                                </ul>
+                                <a class="wa-btn" style="background:#C87E8A;color:white"
+                                    href="https://wa.me/77761542437?text=Здравствуйте!%20Интересует%20корпоративная%20аренда%20автомобилей."
+                                    target="_blank">
+                                    <svg viewBox="0 0 24 24" fill="currentColor"
+                                        style="width:18px;height:18px;flex-shrink:0">
+                                        <path
+                                            d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z" />
+                                    </svg>
+                                    Обсудить условия
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+    </div><!-- /page-rental -->
+
+    <!-- CONTACT STRIP -->
+    <div class="contact-strip" id="contacts">
+        <div>
+            <h3>ОСТАЛИСЬ ВОПРОСЫ?</h3>
+            <p>Ответим за 15 минут — с 8:00 до 23:00 ежедневно</p>
+        </div>
+        <a href="https://wa.me/77761542437" target="_blank" class="btn-primary" style="white-space:nowrap">
+            Написать в WhatsApp →
+        </a>
+    </div>
+
+    <!-- FOOTER -->
+    <footer>
+        <div class="footer-brand">
+            <a href="#" class="logo">Ж<span style="color:var(--gold)">О</span>ЛДА</a>
+            <p>Аренда и выкуп автомобилей в Астане. Честные условия, прозрачные цены.</p>
+        </div>
+        <div class="footer-col">
+            <h5>Навигация</h5>
+            <ul>
+                <li><a href="#" onclick="showPage('buyout')">Аренда с выкупом</a></li>
+                <li><a href="#" onclick="showPage('rental')">Аренда без выкупа</a></li>
+                <li><a href="#dreamcar">Предложи свой автомобиль</a></li>
+            </ul>
+        </div>
+        <div class="footer-col">
+            <h5>Контакты</h5>
+            <ul>
+                <li><a href="https://wa.me/77761542437" target="_blank">WhatsApp: +7 776 154 24 37</a></li>
+                <li><a href="#">Астана, Казахстан</a></li>
+                <li><a href="#">Ежедневно 8:00 — 23:00</a></li>
+            </ul>
+        </div>
+    </footer>
+    <div class="footer-bottom">
+        <p>© 2025 ЖОЛДА. Все права защищены.</p>
+        <p style="color:var(--text-muted)">Астана · Казахстан</p>
+    </div>
+
+    <script>
+        // ── CURSOR ──
+        const cursor = document.getElementById('cursor');
+        const ring = document.getElementById('cursorRing');
+        let mx = 0, my = 0;
+        document.addEventListener('mousemove', e => {
+            mx = e.clientX; my = e.clientY;
+            cursor.style.transform = `translate(${mx - 4}px, ${my - 4}px)`;
+            ring.style.transform = `translate(${mx - 18}px, ${my - 18}px)`;
+        });
+
+        // ── TABS / PAGES ──
+        function showPage(page) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('page-' + page).classList.add('active');
+            document.querySelectorAll('.tab-btn')[page === 'buyout' ? 0 : 1].classList.add('active');
+            document.getElementById('pageTabs').scrollIntoView({ behavior: 'smooth', block: 'start' });
+            return false;
+        }
+
+        // ── CAR CARDS ──
+        function toggleCar(id) {
+            const el = document.getElementById('car-' + id);
+            const isOpen = el.classList.contains('open');
+            document.querySelectorAll('.car-expand').forEach(e => e.classList.remove('open'));
+            if (!isOpen) el.classList.add('open');
+        }
+
+        // ── PERSONA CARDS ──
+        function togglePersona(id) {
+            const el = document.getElementById('persona-' + id);
+            const isOpen = el.classList.contains('open');
+            document.querySelectorAll('.persona-expand').forEach(e => e.classList.remove('open'));
+            if (!isOpen) el.classList.add('open');
+        }
+
+        // ── DREAM FORM ──
+        function submitDream(e) {
+            e.preventDefault();
+            const btn = e.target.querySelector('button[type=submit]');
+            btn.textContent = '✓ Заявка отправлена!';
+            btn.style.background = '#25D366';
+            btn.style.color = 'white';
+            setTimeout(() => {
+                btn.textContent = 'Отправить заявку →';
+                btn.style.background = '';
+                btn.style.color = '';
+                e.target.reset();
+            }, 3000);
+        }
+
+        // ── REVEAL ON SCROLL ──
+        const observer = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (e.isIntersecting) {
+                    e.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.08 });
+        document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+    </script>
+</body>
+
+</html>
